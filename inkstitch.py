@@ -477,12 +477,6 @@ def get_flags(stitch):
     return flags
 
 def write_embroidery_file(file_path, stitches):
-    # Embroidery machines don't care about our canvas size, so we relocate the
-    # design to the origin.  It might make sense to center it about the origin
-    # instead.
-    min_x = min(stitch.x for stitch in stitches)
-    min_y = min(stitch.y for stitch in stitches)
-
     pattern = libembroidery.embPattern_create()
     threads = {}
 
@@ -501,9 +495,9 @@ def write_embroidery_file(file_path, stitches):
             last_color = stitch.color
 
         flags = get_flags(stitch)
-        libembroidery.embPattern_addStitchAbs(pattern, stitch.x - min_x, stitch.y - min_y, flags, 0)
+        libembroidery.embPattern_addStitchAbs(pattern, stitch.x, stitch.y, flags, 0)
 
-    libembroidery.embPattern_addStitchAbs(pattern, stitch.x - min_x, stitch.y - min_y, libembroidery.END, 0)
+    libembroidery.embPattern_addStitchAbs(pattern, stitch.x, stitch.y, libembroidery.END, 0)
 
     # convert from pixels to millimeters
     libembroidery.embPattern_scale(pattern, 1/PIXELS_PER_MM)
